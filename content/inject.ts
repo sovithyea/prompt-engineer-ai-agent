@@ -15,7 +15,7 @@ import type {
 
 const ADAPTERS: SiteAdapter[] = [claudeAdapter, chatgptAdapter, geminiAdapter];
 const BUTTON_MARKER = "data-prompt-polish-button";
-const BUTTON_LABEL = "✨ Enhance Prompt";
+const BUTTON_LABEL = "Enhance Prompt";
 
 function findAdapter(): SiteAdapter | null {
   return ADAPTERS.find((adapter) => adapter.matches()) ?? null;
