@@ -17,12 +17,27 @@
         font-size: 18px;
         margin-bottom: 4px;
       }
+      h2 {
+        font-size: 13px;
+        margin: 0 0 6px;
+      }
       p {
         margin: 8px 0;
       }
       p.hint {
         font-size: 11px;
         color: #6f6a65;
+      }
+      .disclosure {
+        background: #fff7f4;
+        border: 1px solid #f0d9cd;
+        border-radius: 8px;
+        padding: 12px 14px;
+        margin: 16px 0;
+        font-size: 13px;
+      }
+      .disclosure p {
+        margin: 4px 0;
       }
       .sites {
         display: flex;
@@ -52,12 +67,20 @@
     <div class="sites">
       <code>claude.ai</code><code>chatgpt.com</code><code>gemini.google.com</code>
     </div>
+
+    <div class="disclosure">
+      <h2>How your data is used</h2>
+      <p>
+        When you click <strong>Enhance Prompt</strong>, the text currently in the box is sent to Prompt
+        Polish's own server, which forwards it to Anthropic's Claude API to generate clarifying questions or a
+        rewritten prompt. Nothing is logged or stored — not by Prompt Polish, not on our server.
+      </p>
+      <p>Nothing is read or sent at any other time. Full details: <a href="https://claude.ai/code/artifact/82ffc4de-7fd3-402d-8d01-44a15d22e45f" target="_blank" rel="noopener">privacy policy</a>.</p>
+    </div>
+
     <p>
       If Prompt Polish is too vague to rewrite confidently, it'll ask up to two quick clarifying questions
       first.
-    </p>
-    <p class="hint">
-      <a href="https://claude.ai/code/artifact/82ffc4de-7fd3-402d-8d01-44a15d22e45f" target="_blank" rel="noopener">Privacy policy</a>
     </p>
   </body>
 </html>

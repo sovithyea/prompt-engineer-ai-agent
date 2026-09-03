@@ -1,3 +1,8 @@
 node_modules/
 dist/
 .env
+
+# Local AI-coding-agent tooling, not part of the shipped extension
+.agents/
+.claude/
+skills-lock.json
