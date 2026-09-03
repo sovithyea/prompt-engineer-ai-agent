@@ -11,9 +11,13 @@ export function showErrorToast(message: string) {
   toast.setAttribute(TOAST_MARKER, "true");
   toast.style.cssText =
     "position: fixed; bottom: 24px; right: 24px; z-index: 2147483647; max-width: 320px; " +
-    "background: #fff; color: #1c1a18; border-left: 4px solid #d64545; border-radius: 8px; " +
+    "background: #fff; color: #1c1a18; border: 1px solid #e4e1de; border-radius: 8px; " +
     "box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2); padding: 12px 16px; font-family: system-ui, sans-serif; " +
     "font-size: 13px; line-height: 1.45; display: flex; gap: 10px; align-items: flex-start;";
+
+  const dot = document.createElement("span");
+  dot.style.cssText =
+    "flex-shrink: 0; width: 8px; height: 8px; border-radius: 50%; background: #d64545; margin-top: 5px;";
 
   const text = document.createElement("div");
   text.style.cssText = "flex: 1;";
@@ -27,6 +31,7 @@ export function showErrorToast(message: string) {
     "background: none; border: none; cursor: pointer; font-size: 18px; line-height: 1; color: #6f6a65; padding: 0;";
   closeButton.addEventListener("click", () => toast.remove());
 
+  toast.appendChild(dot);
   toast.appendChild(text);
   toast.appendChild(closeButton);
   document.body.appendChild(toast);
