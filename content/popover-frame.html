@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        background: transparent;
+      }
+      body {
+        font-family: system-ui, sans-serif;
+      }
+      .popover {
+        box-sizing: border-box;
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 12px;
+      }
+      .question {
+        margin-bottom: 6px;
+        font-size: 13px;
+        color: #222;
+      }
+      textarea {
+        width: 100%;
+        box-sizing: border-box;
+        font-size: 13px;
+        padding: 6px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        resize: vertical;
+        min-height: 40px;
+        font-family: inherit;
+      }
+      .actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+      }
+      button {
+        font-size: 13px;
+        padding: 6px 12px;
+        border-radius: 4px;
+        border: none;
+        cursor: pointer;
+      }
+      .submit {
+        background: #d97757;
+        color: #fff;
+      }
+      .cancel {
+        background: #eee;
+        color: #333;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="popover" id="popover"></div>
+    <script src="popover-frame.js"></script>
+  </body>
+</html>

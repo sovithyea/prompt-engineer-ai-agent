@@ -6,8 +6,11 @@ const outdir = "dist";
 
 const buildOptions = {
   entryPoints: {
-    "background/engine": "background/engine.ts",
-    // Phase 1+: "content/inject": "content/inject.ts", "content/popover": "content/popover.ts", "options/index": "options/index.ts"
+    "background/index": "background/index.ts",
+    "content/inject": "content/inject.ts",
+    "content/popover-frame": "content/popover-frame.ts",
+    "options/index": "options/index.ts",
+    // Phase 2+: "content/inject" will need to dispatch to chatgpt/gemini adapters too
   },
   bundle: true,
   platform: "browser",
@@ -21,7 +24,11 @@ const buildOptions = {
 function copyStaticFiles() {
   mkdirSync(outdir, { recursive: true });
   copyFileSync("manifest.json", `${outdir}/manifest.json`);
-  // Phase 1+: also copy options/index.html, icons/
+  mkdirSync(`${outdir}/options`, { recursive: true });
+  copyFileSync("options/index.html", `${outdir}/options/index.html`);
+  mkdirSync(`${outdir}/content`, { recursive: true });
+  copyFileSync("content/popover-frame.html", `${outdir}/content/popover-frame.html`);
+  // Phase 3+: also copy icons/
 }
 
 async function run() {

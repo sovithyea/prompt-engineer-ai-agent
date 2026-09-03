@@ -4,8 +4,22 @@
   "version": "0.1.0",
   "description": "Rewrites rough prompts into well-structured prompts for claude.ai, chatgpt.com, and gemini.google.com.",
   "background": {
-    "service_worker": "background/engine.js"
+    "service_worker": "background/index.js"
   },
   "permissions": ["storage"],
-  "host_permissions": ["https://api.anthropic.com/*"]
+  "host_permissions": ["https://api.anthropic.com/*"],
+  "content_scripts": [
+    {
+      "matches": ["https://claude.ai/*"],
+      "js": ["content/inject.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "options_page": "options/index.html",
+  "web_accessible_resources": [
+    {
+      "resources": ["content/popover-frame.html", "content/popover-frame.js"],
+      "matches": ["https://claude.ai/*"]
+    }
+  ]
 }

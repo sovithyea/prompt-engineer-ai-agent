@@ -25,9 +25,6 @@ export interface RewriteResponse {
   assumptions?: string[];
 }
 
-// --- Phase 1+ (not implemented this session) ---
-// Declared now because CLAUDE.md requires this interface to exist before
-// content/adapters/{claude,chatgpt,gemini}.ts are built.
 export interface SiteAdapter {
   matches(): boolean;
   getInputEl(): HTMLElement | null;
@@ -35,3 +32,14 @@ export interface SiteAdapter {
   setText(text: string): void;
   getButtonAnchor(): HTMLElement | null;
 }
+
+// Message-passing contract between content scripts and the background
+// service worker -- content scripts don't hold the API key or call the
+// engine directly, per the "extension-only, no backend" architecture.
+export type EngineMessage =
+  | { type: "analyze"; request: AnalyzeRequest }
+  | { type: "rewrite"; request: RewriteRequest };
+
+export type EngineMessageResponse =
+  | { ok: true; data: AnalyzeResponse | RewriteResponse }
+  | { ok: false; error: string };

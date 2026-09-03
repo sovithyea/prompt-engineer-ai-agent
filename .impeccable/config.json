@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "flat-type-hierarchy",
+        "value": "*",
+        "files": [
+          "options/index.html"
+        ],
+        "createdAt": "2026-09-03T04:52:15.942Z",
+        "reason": "3-tier scale (18/14/11px) already meets 1.25 ratio at both steps (1.29, 1.27); label/input/button intentionally share 14px as form-control-level text, not a hierarchy defect"
+      }
+    ]
+  }
+}
