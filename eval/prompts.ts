@@ -17,6 +17,13 @@ export const EVAL_CASES: EvalCase[] = [
     dimension: "missing format/recipient/tone",
   },
   {
+    id: "vague-khmer-email",
+    rawPrompt: "សូមសរសេរអ៊ីមែលមួយ",
+    target: "claude",
+    expectedNeedsClarification: true,
+    dimension: "non-English draft (Khmer, 'please write an email') -- missing recipient/purpose; clarifying questions should come back in Khmer, not English",
+  },
+  {
     id: "vague-scope-party",
     rawPrompt: "Help me plan a birthday party.",
     target: "gemini",
