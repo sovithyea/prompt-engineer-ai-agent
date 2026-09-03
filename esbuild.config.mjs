@@ -10,7 +10,6 @@ const buildOptions = {
     "content/inject": "content/inject.ts",
     "content/popover-frame": "content/popover-frame.ts",
     "content/fallback-frame": "content/fallback-frame.ts",
-    "options/index": "options/index.ts",
   },
   bundle: true,
   platform: "browser",

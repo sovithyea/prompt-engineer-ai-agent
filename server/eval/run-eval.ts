@@ -1,4 +1,4 @@
-import { analyze, rewrite } from "../background/engine";
+import { analyze, rewrite } from "../src/engine";
 import { EVAL_CASES } from "./prompts";
 
 async function main() {

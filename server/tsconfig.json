@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "lib": ["ES2022", "DOM"],
+    "lib": ["ES2022"],
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "strict": true,
@@ -10,8 +10,7 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
-    "resolveJsonModule": true,
-    "types": ["chrome"]
+    "types": ["@cloudflare/workers-types", "node"]
   },
-  "include": ["background/**/*.ts", "content/**/*.ts", "shared/**/*.ts", "options/**/*.ts"]
+  "include": ["src/**/*.ts", "eval/**/*.ts"]
 }

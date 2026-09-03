@@ -7,14 +7,11 @@
   "scripts": {
     "build": "node esbuild.config.mjs",
     "watch": "node esbuild.config.mjs --watch",
-    "typecheck": "tsc --noEmit",
-    "eval": "tsx --env-file=.env eval/run-eval.ts"
+    "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
     "@types/chrome": "^0.2.8",
-    "@types/node": "^26.4.1",
     "esbuild": "^0.28.2",
-    "tsx": "^4.23.13",
     "typescript": "^7.0.2"
   }
 }

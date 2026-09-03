@@ -19,10 +19,9 @@
       "48": "icons/icon48.png",
       "128": "icons/icon128.png"
     },
-    "default_title": "Prompt Polish settings"
+    "default_title": "About Prompt Polish"
   },
-  "permissions": ["storage"],
-  "host_permissions": ["https://api.anthropic.com/*"],
+  "host_permissions": ["https://prompt-polish-api.YOUR-SUBDOMAIN.workers.dev/*"],
   "content_scripts": [
     {
       "matches": [

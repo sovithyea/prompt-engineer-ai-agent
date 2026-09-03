@@ -11,6 +11,15 @@
         ],
         "createdAt": "2026-09-03T04:52:15.942Z",
         "reason": "3-tier scale (18/14/11px) already meets 1.25 ratio at both steps (1.29, 1.27); label/input/button intentionally share 14px as form-control-level text, not a hierarchy defect"
+      },
+      {
+        "rule": "flat-type-hierarchy",
+        "value": "*",
+        "files": [
+          "content/fallback-frame.html"
+        ],
+        "createdAt": "2026-09-03T06:58:33.289Z",
+        "reason": "3-tier scale (18/14/11px) already meets 1.25 ratio at both steps (1.286, 1.273); question/textarea/button intentionally share 14px as one form-control tier, same false-positive pattern already confirmed on options/index.html"
       }
     ]
   }

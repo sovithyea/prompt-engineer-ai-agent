@@ -8,19 +8,28 @@ too vague → rewrites it in place using the target model's best practices.
 Built by Vith (Swinburne AI student, side project — keep scope lean,
 coursework comes first this semester).
 
-## Architecture decision: extension-only, no backend
+## Architecture decision: shared key behind a backend proxy
 
-The extension calls the Anthropic API directly from the background service
-worker, using a key the user pastes into extension settings (stored in
-`chrome.storage.local`). No server to build, host, or pay for.
+Originally this was extension-only (BYO-key, no backend) — see git history
+(`e3b108c` onward) for that version. It changed because Vith wants to ship
+this to real users without asking each of them to bring their own Anthropic
+API key. Since anything shipped inside an extension bundle is readable by
+whoever installs it, a shared key can never live client-side — it would be
+extracted within minutes and usable by anyone, on Vith's bill.
 
-**Gotcha:** api.anthropic.com blocks direct browser calls via CORS unless the
-request includes header `anthropic-dangerous-direct-browser-access: true`.
-This is fine for BYO-key personal use — the key never leaves the user's own
-browser. It stops being fine the moment this ships to other people, because
-their key would be visible in network requests to anyone inspecting the
-extension. **If this ever becomes a public product, that's the trigger to add
-a thin backend proxy that holds the key server-side.** Not needed for MVP.
+The actual architecture now: a Cloudflare Worker (`server/`) holds the real
+Anthropic key as a secret and exposes `POST /analyze` and `POST /rewrite`.
+The extension's background service worker (`background/index.ts`) is a thin
+relay — it forwards `EngineMessage`s to the Worker and returns the response,
+holding no secret itself. `server/src/engine.ts` is what used to be
+`background/engine.ts`: the ANALYZE_SYSTEM/REWRITE_SYSTEM prompts, retry/
+timeout logic, and response validation all live there now. See
+`server/README.md` for deploy steps and — importantly — the current
+rate-limiting posture (there isn't one yet, by deliberate choice; read that
+file before assuming it's safe to point people at this).
+
+No per-user API key, no options-page settings, no `chrome.storage` at all
+anymore — install and it just works.
 
 ## Core flow (state machine)
 
@@ -140,24 +149,36 @@ keep the content script bundle small.
 ## File structure
 
 ```
-prompt-polish/
+prompt-polish/                  # the extension
 ├── manifest.json
 ├── background/
-│   ├── engine.ts        # analyze + rewrite calls
-│   └── storage.ts        # API key get/set
+│   └── index.ts            # thin relay: forwards EngineMessages to server/, holds no secret
 ├── content/
 │   ├── adapters/
 │   │   ├── claude.ts
 │   │   ├── chatgpt.ts
-│   │   ├── gemini.ts
-│   │   └── types.ts
-│   ├── inject.ts          # picks adapter, injects button
-│   └── popover.ts         # shadow DOM clarifying-question UI
+│   │   └── gemini.ts       # SiteAdapter interface lives in shared/types.ts, not a separate file
+│   ├── inject.ts            # picks adapter, injects the Enhance button
+│   ├── popover.ts            # iframe-isolated clarifying-question UI (see note below)
+│   ├── popover-frame.{html,ts}
+│   ├── fallback.ts            # manual paste-mode modal, shown if an adapter's selectors fail
+│   ├── fallback-frame.{html,ts}
+│   └── toast.ts                # inline error notification
 ├── options/
-│   └── index.html          # API key settings page
+│   └── index.html               # static info page -- no settings, nothing to configure
 └── shared/
     └── types.ts
+
+server/                          # Cloudflare Worker holding the real API key -- see server/README.md
+├── src/
+│   ├── index.ts              # HTTP handler: POST /analyze, POST /rewrite, CORS
+│   ├── engine.ts               # the actual ANALYZE_SYSTEM/REWRITE_SYSTEM logic (moved here from background/engine.ts)
+│   └── types.ts
+├── eval/                        # moved here from the extension's eval/ -- this is where the real logic lives now
+└── wrangler.toml
 ```
+
+Note on `popover.ts`/`popover-frame.ts`: the clarifying-question popover runs in an `<iframe>`, not a Shadow DOM, because Shadow DOM only isolates CSS -- it doesn't stop a host page's own keydown listeners from intercepting keystrokes meant for it (this broke typing into the popover on claude.ai during development). An iframe is a genuinely separate browsing context.
 
 ## Phased build plan
 

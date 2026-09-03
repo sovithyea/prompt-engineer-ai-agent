@@ -1,4 +1,4 @@
-import type { Target } from "../shared/types";
+import type { Target } from "../src/types";
 
 export interface EvalCase {
   id: string;

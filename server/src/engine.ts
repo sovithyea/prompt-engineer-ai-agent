@@ -1,6 +1,12 @@
-import type { AnalyzeRequest, AnalyzeResponse, RewriteRequest, RewriteResponse } from "../shared/types";
+import type { AnalyzeRequest, AnalyzeResponse, RewriteRequest, RewriteResponse } from "./types";
 
 const ANTHROPIC_MODEL = "claude-haiku-4-5-20251001";
+
+// Bounds worst-case cost per request. This is a per-request size cap, not
+// a rate limit -- it doesn't stop someone from calling the endpoint
+// repeatedly, only from sending one enormous prompt. Deliberately no
+// request-count rate limiting here yet (see server/README.md).
+const MAX_PROMPT_LENGTH = 8000;
 
 export class EngineError extends Error {
   raw?: unknown;
@@ -77,7 +83,6 @@ async function callClaude(apiKey: string, system: string, userMessage: string): 
           "content-type": "application/json",
           "x-api-key": apiKey,
           "anthropic-version": "2023-06-01",
-          "anthropic-dangerous-direct-browser-access": "true",
         },
         body: JSON.stringify({
           model: ANTHROPIC_MODEL,
@@ -109,13 +114,13 @@ async function callClaude(apiKey: string, system: string, userMessage: string): 
         lastError = new EngineError("Request to Anthropic timed out.");
         continue;
       }
-      if (isAbort) throw new EngineError("Request to Anthropic timed out. Check your connection and try again.");
-      // Network failure (offline, DNS, CORS) -- retry the same as a timeout.
+      if (isAbort) throw new EngineError("Request to Anthropic timed out. Try again.");
+      // Network failure -- retry the same as a timeout.
       if (attempt < MAX_RETRIES) {
         lastError = err;
         continue;
       }
-      throw new EngineError("Could not reach Anthropic. Check your connection and try again.", err);
+      throw new EngineError("Could not reach Anthropic. Try again.", err);
     } finally {
       clearTimeout(timeout);
     }
@@ -149,6 +154,12 @@ function buildUserMessage(request: AnalyzeRequest): string {
   return lines.join("\n\n");
 }
 
+function assertPromptLength(rawPrompt: string) {
+  if (rawPrompt.length > MAX_PROMPT_LENGTH) {
+    throw new EngineError(`Draft prompt is too long (max ${MAX_PROMPT_LENGTH} characters).`);
+  }
+}
+
 function validateAnalyzeResponse(parsed: unknown): AnalyzeResponse {
   const obj = parsed as any;
   if (typeof obj !== "object" || obj === null || typeof obj.needsClarification !== "boolean") {
@@ -171,11 +182,13 @@ function validateRewriteResponse(parsed: unknown): RewriteResponse {
 }
 
 export async function analyze(request: AnalyzeRequest, apiKey: string): Promise<AnalyzeResponse> {
+  assertPromptLength(request.rawPrompt);
   const parsed = await callClaude(apiKey, ANALYZE_SYSTEM, buildUserMessage(request));
   return validateAnalyzeResponse(parsed);
 }
 
 export async function rewrite(request: RewriteRequest, apiKey: string): Promise<RewriteResponse> {
+  assertPromptLength(request.rawPrompt);
   const parsed = await callClaude(apiKey, REWRITE_SYSTEM, buildUserMessage(request));
   return validateRewriteResponse(parsed);
 }

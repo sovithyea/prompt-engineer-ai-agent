@@ -1,0 +1,19 @@
+{
+  "name": "prompt-polish-api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Cloudflare Worker holding the shared Anthropic API key server-side for the Prompt Polish extension.",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "typecheck": "tsc --noEmit",
+    "eval": "tsx --env-file=.env eval/run-eval.ts"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20260903.1",
+    "tsx": "^4.23.13",
+    "typescript": "^7.0.2",
+    "wrangler": "^4.128.0"
+  }
+}
