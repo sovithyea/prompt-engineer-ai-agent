@@ -45,34 +45,83 @@ Respond with ONLY a JSON object, nothing else -- no markdown code fences, no com
 {"rewritten": string, "changes": string[], "assumptions": string[] | omitted}
 "changes" is 3-6 short bullets summarizing what changed and why. Omit or leave "assumptions" empty if none were made.`;
 
+const REQUEST_TIMEOUT_MS = 30_000;
+const MAX_RETRIES = 2;
+const RETRY_BASE_DELAY_MS = 500;
+// Anthropic's own recommended retryable statuses: 429 (rate limited),
+// 500/529 (server error/overloaded). Not 401/403/400 -- retrying a bad
+// key or malformed request just wastes three round-trips on a request
+// that will never succeed.
+const RETRYABLE_STATUSES = new Set([429, 500, 529]);
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 async function callClaude(apiKey: string, system: string, userMessage: string): Promise<unknown> {
-  const res = await fetch("https://api.anthropic.com/v1/messages", {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-      "x-api-key": apiKey,
-      "anthropic-version": "2023-06-01",
-      "anthropic-dangerous-direct-browser-access": "true",
-    },
-    body: JSON.stringify({
-      model: ANTHROPIC_MODEL,
-      max_tokens: 1024,
-      system,
-      messages: [{ role: "user", content: userMessage }],
-    }),
-  });
+  let lastError: unknown;
 
-  if (!res.ok) {
-    const text = await res.text().catch(() => "");
-    throw new EngineError(`Anthropic API error ${res.status}: ${text.slice(0, 500)}`);
+  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+    if (attempt > 0) {
+      await sleep(RETRY_BASE_DELAY_MS * 2 ** (attempt - 1));
+    }
+
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+
+    try {
+      const res = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        signal: controller.signal,
+        headers: {
+          "content-type": "application/json",
+          "x-api-key": apiKey,
+          "anthropic-version": "2023-06-01",
+          "anthropic-dangerous-direct-browser-access": "true",
+        },
+        body: JSON.stringify({
+          model: ANTHROPIC_MODEL,
+          max_tokens: 1024,
+          system,
+          messages: [{ role: "user", content: userMessage }],
+        }),
+      });
+
+      if (!res.ok) {
+        const text = await res.text().catch(() => "");
+        if (RETRYABLE_STATUSES.has(res.status) && attempt < MAX_RETRIES) {
+          lastError = new EngineError(`Anthropic API error ${res.status}: ${text.slice(0, 500)}`);
+          continue;
+        }
+        throw new EngineError(`Anthropic API error ${res.status}: ${text.slice(0, 500)}`);
+      }
+
+      const data: any = await res.json();
+      const block = data?.content?.[0];
+      if (!block || block.type !== "text" || typeof block.text !== "string") {
+        throw new EngineError("Unexpected Anthropic response shape (no text block)", data);
+      }
+      return parseJsonResponse(block.text);
+    } catch (err) {
+      if (err instanceof EngineError) throw err;
+      const isAbort = err instanceof DOMException && err.name === "AbortError";
+      if (isAbort && attempt < MAX_RETRIES) {
+        lastError = new EngineError("Request to Anthropic timed out.");
+        continue;
+      }
+      if (isAbort) throw new EngineError("Request to Anthropic timed out. Check your connection and try again.");
+      // Network failure (offline, DNS, CORS) -- retry the same as a timeout.
+      if (attempt < MAX_RETRIES) {
+        lastError = err;
+        continue;
+      }
+      throw new EngineError("Could not reach Anthropic. Check your connection and try again.", err);
+    } finally {
+      clearTimeout(timeout);
+    }
   }
 
-  const data: any = await res.json();
-  const block = data?.content?.[0];
-  if (!block || block.type !== "text" || typeof block.text !== "string") {
-    throw new EngineError("Unexpected Anthropic response shape (no text block)", data);
-  }
-  return parseJsonResponse(block.text);
+  throw lastError instanceof Error ? lastError : new EngineError("Anthropic request failed after retries.", lastError);
 }
 
 function parseJsonResponse(text: string): unknown {
