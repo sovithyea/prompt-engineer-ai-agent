@@ -1,6 +1,6 @@
 {
   "name": "prompt-polish",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
   "description": "Manifest V3 extension that enhances rough prompts for claude.ai, chatgpt.com, and gemini.google.com.",
