@@ -30,7 +30,7 @@ function escapeHtml(text: string): string {
 
 function renderQuestions(questions: string[]) {
   questionsEl.innerHTML = questions
-    .map((q, i) => `<div class="question">${escapeHtml(q)}</div><textarea class="answer" data-index="${i}"></textarea>`)
+    .map((q, i) => `<div class="question">${escapeHtml(q)}</div><textarea class="answer" data-index="${i}" placeholder="Type your answer..."></textarea>`)
     .join("");
 }
 

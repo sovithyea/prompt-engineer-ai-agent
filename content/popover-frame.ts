@@ -24,7 +24,7 @@ function render() {
   const container = document.getElementById("popover")!;
   container.innerHTML = `
     ${questions
-      .map((q, i) => `<div class="question">${escapeHtml(q)}</div><textarea data-index="${i}"></textarea>`)
+      .map((q, i) => `<div class="question">${escapeHtml(q)}</div><textarea data-index="${i}" placeholder="Type your answer..."></textarea>`)
       .join("")}
     <div class="actions">
       <button class="cancel" type="button">Skip</button>
