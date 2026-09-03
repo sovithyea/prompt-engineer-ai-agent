@@ -7,7 +7,7 @@ import type { ClarifyingAnswer } from "../shared/types";
 // child iframe's document at all.
 let parentOrigin = "*";
 let questions: string[] = [];
-let accentColor = "#d97757";
+let accentColor = "#d64545"; // Prompt Polish's own brand red -- overridden per-site by the init message
 
 function escapeHtml(text: string): string {
   const div = document.createElement("div");

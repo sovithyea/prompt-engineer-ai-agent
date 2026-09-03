@@ -1,6 +1,7 @@
 node_modules/
 dist/
 .env
+prompt-polish-web-store.zip
 
 # Local AI-coding-agent tooling, not part of the shipped extension
 .agents/
