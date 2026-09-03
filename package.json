@@ -8,7 +8,7 @@
     "build": "node esbuild.config.mjs",
     "watch": "node esbuild.config.mjs --watch",
     "typecheck": "tsc --noEmit",
-    "eval": "tsx eval/run-eval.ts"
+    "eval": "tsx --env-file=.env eval/run-eval.ts"
   },
   "devDependencies": {
     "@types/chrome": "^0.2.8",

@@ -31,11 +31,11 @@ export const EVAL_CASES: EvalCase[] = [
     dimension: "missing audience/depth",
   },
   {
-    id: "vague-constraints-palindrome",
+    id: "reasonable-default-palindrome",
     rawPrompt: "Write a function to check if a string is a palindrome.",
     target: "gpt",
-    expectedNeedsClarification: true,
-    dimension: "missing constraints (language, case/whitespace rules)",
+    expectedNeedsClarification: false,
+    dimension: "no language specified, but a reasonable default (e.g. Python) is an acceptable assumption",
   },
   {
     id: "vague-format-earbuds",
@@ -69,10 +69,10 @@ export const EVAL_CASES: EvalCase[] = [
   {
     id: "specific-summary",
     rawPrompt:
-      "Summarize the attached quarterly earnings report in exactly 3 bullet points, written for a general news audience with no finance background.",
+      'Summarize this in exactly 3 bullet points, written for a general news audience with no finance background: "Acme Corp reported Q2 revenue of $412M, up 18% year-over-year, driven by strong cloud subscription growth. Net income fell to $22M due to a one-time $40M restructuring charge tied to the closure of two regional offices. The company raised its full-year revenue guidance to $1.7B-$1.75B and announced a $200M share buyback program."',
     target: "gemini",
     expectedNeedsClarification: false,
-    dimension: "format + length + audience given",
+    dimension: "format + length + audience + source content given",
   },
   {
     id: "specific-apology-email",
