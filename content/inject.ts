@@ -62,7 +62,10 @@ function createButton(adapter: SiteAdapter): HTMLButtonElement {
   button.style.cssText =
     "position: fixed; z-index: 2147483647; padding: 8px 14px; border-radius: 8px; border: none; " +
     `background: ${adapter.accentColor}; color: #fff; font-size: 13px; font-weight: 600; cursor: pointer; ` +
-    "font-family: system-ui, sans-serif; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);";
+    // inherit rather than a hardcoded font -- picks up whatever font the
+    // host page itself uses (its own licensed typeface, not one we can
+    // legally bundle), and stays correct if a site ever changes it.
+    "font-family: inherit; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);";
   return button;
 }
 

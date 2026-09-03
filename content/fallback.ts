@@ -20,7 +20,7 @@ export function injectFallbackTrigger(adapter: SiteAdapter) {
   button.style.cssText =
     "position: fixed; bottom: 20px; right: 20px; z-index: 2147483646; padding: 10px 16px; border-radius: 999px; " +
     `border: none; background: ${adapter.accentColor}; color: #fff; font-size: 13px; font-weight: 600; ` +
-    "cursor: pointer; font-family: system-ui, sans-serif; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);";
+    "cursor: pointer; font-family: inherit; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);";
   button.addEventListener("click", () => openFallbackModal(adapter));
   document.body.appendChild(button);
   triggerButton = button;
