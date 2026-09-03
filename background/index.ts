@@ -2,6 +2,21 @@ import { analyze, rewrite, EngineError } from "./engine";
 import { getStoredApiKey } from "./storage";
 import type { EngineMessage, EngineMessageResponse } from "../shared/types";
 
+// First run: send the user straight to the options page to paste their API
+// key, rather than leaving them to discover it's needed only after clicking
+// Enhance and getting an error.
+chrome.runtime.onInstalled.addListener((details) => {
+  if (details.reason === "install") {
+    chrome.runtime.openOptionsPage();
+  }
+});
+
+// No default_popup is set on the toolbar action, so clicking it does
+// nothing by default -- wire it to open options directly instead.
+chrome.action.onClicked.addListener(() => {
+  chrome.runtime.openOptionsPage();
+});
+
 chrome.runtime.onMessage.addListener((message: EngineMessage, _sender, sendResponse: (response: EngineMessageResponse) => void) => {
   handleMessage(message).then(sendResponse);
   return true; // keep the message channel open for the async response

@@ -1,5 +1,6 @@
 import { claudeAdapter } from "./adapters/claude";
 import { chatgptAdapter } from "./adapters/chatgpt";
+import { geminiAdapter } from "./adapters/gemini";
 import { showClarifyingPopover } from "./popover";
 import type {
   SiteAdapter,
@@ -10,7 +11,7 @@ import type {
   EngineMessageResponse,
 } from "../shared/types";
 
-const ADAPTERS: SiteAdapter[] = [claudeAdapter, chatgptAdapter];
+const ADAPTERS: SiteAdapter[] = [claudeAdapter, chatgptAdapter, geminiAdapter];
 const BUTTON_MARKER = "data-prompt-polish-button";
 const BUTTON_LABEL = "✨ Enhance Prompt";
 
@@ -51,14 +52,14 @@ async function runRewrite(
 // Floats as its own box above the composer via position: fixed, rather than
 // being appended inline into the host page's icon row -- decouples us from
 // that row's cramped flex layout entirely.
-function createButton(): HTMLButtonElement {
+function createButton(adapter: SiteAdapter): HTMLButtonElement {
   const button = document.createElement("button");
   button.type = "button";
   button.textContent = BUTTON_LABEL;
   button.setAttribute(BUTTON_MARKER, "true");
   button.style.cssText =
     "position: fixed; z-index: 2147483647; padding: 8px 14px; border-radius: 8px; border: none; " +
-    "background: #d97757; color: #fff; font-size: 13px; font-weight: 600; cursor: pointer; " +
+    `background: ${adapter.accentColor}; color: #fff; font-size: 13px; font-weight: 600; cursor: pointer; ` +
     "font-family: system-ui, sans-serif; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);";
   return button;
 }
@@ -97,7 +98,7 @@ async function handleEnhanceClick(adapter: SiteAdapter, button: HTMLButtonElemen
       // Anchor to the composer itself so the popover centers over "the
       // main box" with a clear gap above it, rather than a small button.
       const composerAnchor = adapter.getInputEl() ?? adapter.getButtonAnchor() ?? button;
-      const answers = await showClarifyingPopover(composerAnchor, analyzeResult.questions);
+      const answers = await showClarifyingPopover(composerAnchor, analyzeResult.questions, adapter.accentColor);
       if (answers.length) previousAnswers = answers;
     }
 
@@ -118,7 +119,7 @@ function injectButton(adapter: SiteAdapter) {
 
   let button = document.querySelector<HTMLButtonElement>(`[${BUTTON_MARKER}]`);
   if (!button) {
-    button = createButton();
+    button = createButton(adapter);
     button.addEventListener("click", () => handleEnhanceClick(adapter, button!));
     document.body.appendChild(button);
   }

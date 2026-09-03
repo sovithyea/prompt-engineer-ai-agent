@@ -7,6 +7,7 @@ import type { ClarifyingAnswer } from "../shared/types";
 // child iframe's document at all.
 let parentOrigin = "*";
 let questions: string[] = [];
+let accentColor = "#d97757";
 
 function escapeHtml(text: string): string {
   const div = document.createElement("div");
@@ -34,11 +35,14 @@ function render() {
   const textareas = Array.from(container.querySelectorAll<HTMLTextAreaElement>("textarea"));
   textareas[0]?.focus();
 
+  const submitButton = container.querySelector<HTMLButtonElement>(".submit")!;
+  submitButton.style.background = accentColor;
+
   container.querySelector(".cancel")!.addEventListener("click", () => {
     parent.postMessage({ type: "prompt-polish-cancel" }, parentOrigin);
   });
 
-  container.querySelector(".submit")!.addEventListener("click", () => {
+  submitButton.addEventListener("click", () => {
     const answers: ClarifyingAnswer[] = textareas.map((ta, i) => ({
       question: questions[i],
       answer: ta.value.trim(),
@@ -59,6 +63,7 @@ window.addEventListener("message", (event) => {
   if (event.data?.type === "prompt-polish-init") {
     parentOrigin = event.origin;
     questions = event.data.questions;
+    accentColor = event.data.accentColor ?? accentColor;
     render();
   }
 });

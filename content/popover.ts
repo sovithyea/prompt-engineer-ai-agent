@@ -10,7 +10,11 @@ const ESTIMATED_HEIGHT = 220; // refined once the frame reports its real rendere
 // broke typing into the popover on claude.ai, which redirects keystrokes
 // to its own composer). A separate browsing context is the only thing
 // that actually isolates keyboard events.
-export function showClarifyingPopover(anchor: HTMLElement, questions: string[]): Promise<ClarifyingAnswer[]> {
+export function showClarifyingPopover(
+  anchor: HTMLElement,
+  questions: string[],
+  accentColor: string,
+): Promise<ClarifyingAnswer[]> {
   return new Promise((resolve) => {
     const iframe = document.createElement("iframe");
     iframe.src = chrome.runtime.getURL("content/popover-frame.html");
@@ -57,7 +61,7 @@ export function showClarifyingPopover(anchor: HTMLElement, questions: string[]):
     window.addEventListener("message", onMessage);
 
     iframe.addEventListener("load", () => {
-      iframe.contentWindow!.postMessage({ type: "prompt-polish-init", questions }, frameOrigin);
+      iframe.contentWindow!.postMessage({ type: "prompt-polish-init", questions, accentColor }, frameOrigin);
       iframe.focus();
     });
   });

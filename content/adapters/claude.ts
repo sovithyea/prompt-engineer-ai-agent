@@ -26,6 +26,7 @@ function queryFirst(selectors: string[]): HTMLElement | null {
 
 export const claudeAdapter: SiteAdapter = {
   target: "claude",
+  accentColor: "#d97757", // Anthropic's brand terracotta/orange
   matches() {
     return location.hostname === "claude.ai";
   },

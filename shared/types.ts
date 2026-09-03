@@ -27,6 +27,8 @@ export interface RewriteResponse {
 
 export interface SiteAdapter {
   target: Target;
+  /** CSS `background` value (solid color or gradient) matching this site's brand, used to accent the injected UI. */
+  accentColor: string;
   matches(): boolean;
   getInputEl(): HTMLElement | null;
   getText(): string;

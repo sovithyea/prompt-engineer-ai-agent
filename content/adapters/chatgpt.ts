@@ -32,6 +32,7 @@ function setNativeTextareaValue(el: HTMLTextAreaElement, text: string) {
 
 export const chatgptAdapter: SiteAdapter = {
   target: "gpt",
+  accentColor: "#10a37f", // OpenAI's brand teal-green
   matches() {
     return location.hostname === "chatgpt.com" || location.hostname === "chat.openai.com";
   },

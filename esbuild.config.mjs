@@ -1,5 +1,5 @@
 import { build, context } from "esbuild";
-import { mkdirSync, copyFileSync } from "node:fs";
+import { mkdirSync, copyFileSync, readdirSync } from "node:fs";
 
 const watch = process.argv.includes("--watch");
 const outdir = "dist";
@@ -28,7 +28,10 @@ function copyStaticFiles() {
   copyFileSync("options/index.html", `${outdir}/options/index.html`);
   mkdirSync(`${outdir}/content`, { recursive: true });
   copyFileSync("content/popover-frame.html", `${outdir}/content/popover-frame.html`);
-  // Phase 3+: also copy icons/
+  mkdirSync(`${outdir}/icons`, { recursive: true });
+  for (const file of readdirSync("icons")) {
+    copyFileSync(`icons/${file}`, `${outdir}/icons/${file}`);
+  }
 }
 
 async function run() {
