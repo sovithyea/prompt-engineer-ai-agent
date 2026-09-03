@@ -1,0 +1,20 @@
+{
+  "name": "prompt-polish",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Manifest V3 extension that enhances rough prompts for claude.ai, chatgpt.com, and gemini.google.com.",
+  "scripts": {
+    "build": "node esbuild.config.mjs",
+    "watch": "node esbuild.config.mjs --watch",
+    "typecheck": "tsc --noEmit",
+    "eval": "tsx eval/run-eval.ts"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.2.8",
+    "@types/node": "^26.4.1",
+    "esbuild": "^0.28.2",
+    "tsx": "^4.23.13",
+    "typescript": "^7.0.2"
+  }
+}
