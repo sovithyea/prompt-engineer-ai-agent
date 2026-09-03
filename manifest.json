@@ -21,7 +21,7 @@
     },
     "default_title": "About Prompt Polish"
   },
-  "host_permissions": ["https://prompt-polish-api.YOUR-SUBDOMAIN.workers.dev/*"],
+  "host_permissions": ["https://prompt-polish-api.prompt-polish.workers.dev/*"],
   "content_scripts": [
     {
       "matches": [

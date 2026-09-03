@@ -1,8 +1,7 @@
 import type { EngineMessage, EngineMessageResponse } from "../shared/types";
 
-// Deployed via server/ (a Cloudflare Worker) -- update this after running
-// `npm run deploy` there, then rebuild. See server/README.md.
-const BACKEND_URL = "https://prompt-polish-api.YOUR-SUBDOMAIN.workers.dev";
+// Deployed via server/ (a Cloudflare Worker). See server/README.md.
+const BACKEND_URL = "https://prompt-polish-api.prompt-polish.workers.dev";
 
 // First run: no API key to configure anymore (the shared backend holds
 // it), but still worth a quick "here's how it works" landing page instead
