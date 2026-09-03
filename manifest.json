@@ -10,7 +10,7 @@
   "host_permissions": ["https://api.anthropic.com/*"],
   "content_scripts": [
     {
-      "matches": ["https://claude.ai/*"],
+      "matches": ["https://claude.ai/*", "https://chatgpt.com/*", "https://chat.openai.com/*"],
       "js": ["content/inject.js"],
       "run_at": "document_idle"
     }
@@ -19,7 +19,7 @@
   "web_accessible_resources": [
     {
       "resources": ["content/popover-frame.html", "content/popover-frame.js"],
-      "matches": ["https://claude.ai/*"]
+      "matches": ["https://claude.ai/*", "https://chatgpt.com/*", "https://chat.openai.com/*"]
     }
   ]
 }

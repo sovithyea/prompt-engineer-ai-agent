@@ -1,4 +1,5 @@
 import { claudeAdapter } from "./adapters/claude";
+import { chatgptAdapter } from "./adapters/chatgpt";
 import { showClarifyingPopover } from "./popover";
 import type {
   SiteAdapter,
@@ -9,7 +10,7 @@ import type {
   EngineMessageResponse,
 } from "../shared/types";
 
-const ADAPTERS: SiteAdapter[] = [claudeAdapter];
+const ADAPTERS: SiteAdapter[] = [claudeAdapter, chatgptAdapter];
 const BUTTON_MARKER = "data-prompt-polish-button";
 const BUTTON_LABEL = "✨ Enhance Prompt";
 
@@ -21,14 +22,28 @@ function sendEngineMessage(message: EngineMessage): Promise<EngineMessageRespons
   return chrome.runtime.sendMessage(message);
 }
 
-async function runAnalyze(rawPrompt: string, previousAnswers?: ClarifyingAnswer[]): Promise<AnalyzeResponse> {
-  const response = await sendEngineMessage({ type: "analyze", request: { rawPrompt, target: "claude", previousAnswers } });
+async function runAnalyze(
+  adapter: SiteAdapter,
+  rawPrompt: string,
+  previousAnswers?: ClarifyingAnswer[],
+): Promise<AnalyzeResponse> {
+  const response = await sendEngineMessage({
+    type: "analyze",
+    request: { rawPrompt, target: adapter.target, previousAnswers },
+  });
   if (!response.ok) throw new Error(response.error);
   return response.data as AnalyzeResponse;
 }
 
-async function runRewrite(rawPrompt: string, previousAnswers?: ClarifyingAnswer[]): Promise<RewriteResponse> {
-  const response = await sendEngineMessage({ type: "rewrite", request: { rawPrompt, target: "claude", previousAnswers } });
+async function runRewrite(
+  adapter: SiteAdapter,
+  rawPrompt: string,
+  previousAnswers?: ClarifyingAnswer[],
+): Promise<RewriteResponse> {
+  const response = await sendEngineMessage({
+    type: "rewrite",
+    request: { rawPrompt, target: adapter.target, previousAnswers },
+  });
   if (!response.ok) throw new Error(response.error);
   return response.data as RewriteResponse;
 }
@@ -76,7 +91,7 @@ async function handleEnhanceClick(adapter: SiteAdapter, button: HTMLButtonElemen
 
   try {
     let previousAnswers: ClarifyingAnswer[] | undefined;
-    const analyzeResult = await runAnalyze(rawPrompt);
+    const analyzeResult = await runAnalyze(adapter, rawPrompt);
 
     if (analyzeResult.needsClarification && analyzeResult.questions?.length) {
       // Anchor to the composer itself so the popover centers over "the
@@ -86,7 +101,7 @@ async function handleEnhanceClick(adapter: SiteAdapter, button: HTMLButtonElemen
       if (answers.length) previousAnswers = answers;
     }
 
-    const rewriteResult = await runRewrite(rawPrompt, previousAnswers);
+    const rewriteResult = await runRewrite(adapter, rawPrompt, previousAnswers);
     adapter.setText(rewriteResult.rewritten);
   } catch (err) {
     console.error("[Prompt Polish]", err);

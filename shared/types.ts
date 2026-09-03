@@ -26,6 +26,7 @@ export interface RewriteResponse {
 }
 
 export interface SiteAdapter {
+  target: Target;
   matches(): boolean;
   getInputEl(): HTMLElement | null;
   getText(): string;

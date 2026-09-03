@@ -25,6 +25,7 @@ function queryFirst(selectors: string[]): HTMLElement | null {
 }
 
 export const claudeAdapter: SiteAdapter = {
+  target: "claude",
   matches() {
     return location.hostname === "claude.ai";
   },
