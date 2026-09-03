@@ -38,7 +38,12 @@
   "options_page": "options/index.html",
   "web_accessible_resources": [
     {
-      "resources": ["content/popover-frame.html", "content/popover-frame.js"],
+      "resources": [
+        "content/popover-frame.html",
+        "content/popover-frame.js",
+        "content/fallback-frame.html",
+        "content/fallback-frame.js"
+      ],
       "matches": [
         "https://claude.ai/*",
         "https://chatgpt.com/*",

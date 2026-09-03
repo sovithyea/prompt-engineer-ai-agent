@@ -9,8 +9,8 @@ const buildOptions = {
     "background/index": "background/index.ts",
     "content/inject": "content/inject.ts",
     "content/popover-frame": "content/popover-frame.ts",
+    "content/fallback-frame": "content/fallback-frame.ts",
     "options/index": "options/index.ts",
-    // Phase 2+: "content/inject" will need to dispatch to chatgpt/gemini adapters too
   },
   bundle: true,
   platform: "browser",
@@ -28,6 +28,7 @@ function copyStaticFiles() {
   copyFileSync("options/index.html", `${outdir}/options/index.html`);
   mkdirSync(`${outdir}/content`, { recursive: true });
   copyFileSync("content/popover-frame.html", `${outdir}/content/popover-frame.html`);
+  copyFileSync("content/fallback-frame.html", `${outdir}/content/fallback-frame.html`);
   mkdirSync(`${outdir}/icons`, { recursive: true });
   for (const file of readdirSync("icons")) {
     copyFileSync(`icons/${file}`, `${outdir}/icons/${file}`);

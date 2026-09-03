@@ -2,6 +2,8 @@ import { claudeAdapter } from "./adapters/claude";
 import { chatgptAdapter } from "./adapters/chatgpt";
 import { geminiAdapter } from "./adapters/gemini";
 import { showClarifyingPopover } from "./popover";
+import { showErrorToast } from "./toast";
+import { injectFallbackTrigger, removeFallbackTrigger } from "./fallback";
 import type {
   SiteAdapter,
   AnalyzeResponse,
@@ -106,16 +108,21 @@ async function handleEnhanceClick(adapter: SiteAdapter, button: HTMLButtonElemen
     adapter.setText(rewriteResult.rewritten);
   } catch (err) {
     console.error("[Prompt Polish]", err);
-    alert(err instanceof Error ? err.message : "Prompt Polish failed to enhance this prompt.");
+    showErrorToast(err instanceof Error ? err.message : "Prompt Polish failed to enhance this prompt.");
   } finally {
     button.disabled = false;
     button.textContent = BUTTON_LABEL;
   }
 }
 
+let hasEverFoundAnchor = false;
+
 function injectButton(adapter: SiteAdapter) {
   const anchor = adapter.getButtonAnchor();
   if (!anchor) return;
+
+  hasEverFoundAnchor = true;
+  removeFallbackTrigger();
 
   let button = document.querySelector<HTMLButtonElement>(`[${BUTTON_MARKER}]`);
   if (!button) {
@@ -126,9 +133,14 @@ function injectButton(adapter: SiteAdapter) {
   positionButtonAboveComposer(adapter, button);
 }
 
+// If the adapter's selectors never find a composer within a few seconds --
+// most likely the site redesigned and broke them -- fall back to a manual
+// paste/copy modal instead of leaving the extension silently doing nothing.
+const FALLBACK_GRACE_PERIOD_MS = 6000;
+
 function main() {
   const adapter = findAdapter();
-  if (!adapter) return; // Phase 3: manual-fallback popup for unmatched sites
+  if (!adapter) return; // manifest content_scripts only match sites with an adapter
 
   // claude.ai is a client-rendered SPA -- the composer can be torn down
   // and remounted on navigation, so keep re-checking rather than injecting once.
@@ -140,6 +152,10 @@ function main() {
   // drift instead of staying anchored in place.
   window.addEventListener("resize", () => injectButton(adapter));
   injectButton(adapter);
+
+  setTimeout(() => {
+    if (!hasEverFoundAnchor) injectFallbackTrigger(adapter);
+  }, FALLBACK_GRACE_PERIOD_MS);
 }
 
 main();

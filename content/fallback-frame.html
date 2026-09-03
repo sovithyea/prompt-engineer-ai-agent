@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      * { box-sizing: border-box; }
+      html, body { margin: 0; padding: 0; background: transparent; }
+      body {
+        font-family: system-ui, sans-serif;
+        color: #1c1a18;
+      }
+      .modal {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+        padding: 20px;
+        height: 100%;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      h1 {
+        font-size: 15px;
+        font-weight: 700;
+        margin: 0;
+      }
+      .hint {
+        font-size: 12px;
+        color: #6f6a65;
+        margin: 0;
+        line-height: 1.4;
+      }
+      .question {
+        font-size: 13px;
+        font-weight: 600;
+        margin: 4px 0 -4px;
+      }
+      textarea {
+        width: 100%;
+        box-sizing: border-box;
+        font-size: 13px;
+        font-family: inherit;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        resize: vertical;
+      }
+      #draft { flex: 1; min-height: 90px; }
+      .answer { min-height: 44px; }
+      #result { min-height: 120px; background: #faf9f8; }
+      .actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+      }
+      button {
+        font-size: 13px;
+        font-weight: 600;
+        padding: 8px 14px;
+        border-radius: 6px;
+        border: none;
+        cursor: pointer;
+        font-family: inherit;
+      }
+      .primary { color: #fff; }
+      .secondary { background: #eee; color: #333; }
+      .close {
+        position: absolute;
+        top: 14px;
+        right: 14px;
+        background: none;
+        color: #6f6a65;
+        font-size: 18px;
+        padding: 0;
+        line-height: 1;
+      }
+      .status {
+        font-size: 12px;
+        color: #6f6a65;
+        min-height: 16px;
+      }
+      [hidden] { display: none !important; }
+    </style>
+  </head>
+  <body>
+    <div class="modal" style="position: relative">
+      <button class="close" id="close" type="button" aria-label="Close">×</button>
+      <h1>Prompt Polish — paste mode</h1>
+      <p class="hint" id="hint">
+        Couldn't find the message box on this page automatically. Paste your rough prompt below, then copy the
+        result back in yourself.
+      </p>
+      <textarea id="draft" placeholder="Your rough prompt..."></textarea>
+      <div id="questions"></div>
+      <div class="status" id="status"></div>
+      <textarea id="result" class="answer" readonly hidden></textarea>
+      <div class="actions">
+        <button class="secondary" id="copy" type="button" hidden>Copy result</button>
+        <button class="primary" id="enhance" type="button">Enhance</button>
+      </div>
+    </div>
+    <script src="fallback-frame.js"></script>
+  </body>
+</html>
