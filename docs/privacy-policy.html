@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prompt Polish — Privacy Policy</title>
+<style>
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    max-width: 720px;
+    margin: 60px auto;
+    padding: 0 20px;
+    line-height: 1.6;
+    color: #1a1a1a;
+  }
+  h1 { font-size: 1.8em; margin-bottom: 0.2em; }
+  .updated { color: #666; font-size: 0.9em; margin-bottom: 2em; }
+  h2 { font-size: 1.2em; margin-top: 2em; }
+  code { background: #f4f4f4; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
+  ul { padding-left: 1.3em; }
+</style>
+</head>
+<body>
+
+<h1>Prompt Polish &mdash; Privacy Policy</h1>
+<p class="updated">Last updated: September 4, 2026</p>
+
+<p>Prompt Polish is a browser extension that helps you rewrite rough prompts
+into clearer, more specific ones before sending them to an AI chat
+interface. This page explains what data the extension handles and how.</p>
+
+<h2>The short version</h2>
+<p>The only thing Prompt Polish ever sends anywhere is the prompt text you
+explicitly ask it to enhance, plus any answers you type into its clarifying
+questions. That text goes to Prompt Polish's own server, which forwards it to
+Anthropic's API to generate the rewrite. Nothing is stored, and no account,
+sign-in, or API key is required.</p>
+
+<h2>What gets sent, when, and to whom</h2>
+<p>Nothing leaves your browser until you click the "Enhance Prompt" button.
+When you do:</p>
+<ul>
+  <li>The text currently in the input box is read from the page.</li>
+  <li>It is sent to Prompt Polish's server at
+  <code>prompt-polish-api.prompt-polish.workers.dev</code>, a Cloudflare
+  Worker operated by this extension's developer.</li>
+  <li>That server forwards the text to <a href="https://www.anthropic.com/legal/privacy">Anthropic's</a>
+  API, using the developer's own API key, and returns the rewritten prompt to
+  the extension, which puts it in the input box.</li>
+  <li>If the prompt is too vague, the extension may first ask you up to two
+  short clarifying questions. Your answers are sent along with the prompt on
+  the same path.</li>
+</ul>
+<p>The server exists for one reason: so the API key stays server-side instead
+of being bundled into the extension, where anyone who installed it could
+extract it. It is a pass-through &mdash; it does not write your prompt text to
+a database, a log, or a file.</p>
+
+<h2>What is stored</h2>
+<p><strong>Nothing.</strong> The extension has no settings, no account, and
+no API key to save &mdash; it does not use browser extension storage at all,
+and does not request the <code>storage</code> permission. It keeps no history
+of your prompts or rewrites. Close the tab and nothing about your prompt
+remains on your device.</p>
+<p>The server keeps no database either. As with any website, Cloudflare (the
+hosting provider) handles standard network-level request metadata such as IP
+addresses and timestamps under
+<a href="https://www.cloudflare.com/privacypolicy/">its own privacy policy</a>;
+that is infrastructure logging, and does not include your prompt text.
+Prompt text sent onward to Anthropic is handled under
+<a href="https://www.anthropic.com/legal/privacy">Anthropic's privacy policy</a>.</p>
+
+<h2>Permissions this extension requests, and why</h2>
+<ul>
+  <li><strong>Site access</strong> to claude.ai, chatgpt.com, and
+  gemini.google.com &mdash; needed to show the enhance button on those pages,
+  read the prompt you are drafting there, and write the rewritten version
+  back. These are the only sites the extension runs on.</li>
+  <li><strong>Host access</strong> to
+  <code>prompt-polish-api.prompt-polish.workers.dev</code> &mdash; the server
+  described above, and the only outside address the extension contacts.</li>
+</ul>
+
+<h2>What we don't do</h2>
+<ul>
+  <li>No analytics or usage tracking</li>
+  <li>No advertising or ad targeting</li>
+  <li>No selling or sharing of your data with third parties</li>
+  <li>No accounts, sign-in, or personal information collected</li>
+  <li>No access to your browsing activity outside the supported AI chat sites</li>
+  <li>No reading of your existing conversations &mdash; only the text sitting
+  in the input box at the moment you click enhance</li>
+</ul>
+
+<h2>Changes to this policy</h2>
+<p>If this extension's data handling changes (for example, if a future
+version adds optional local history), this page will be updated and the
+"last updated" date above will change accordingly.</p>
+
+<h2>Contact</h2>
+<p>Questions about this policy can be raised via the project's GitHub
+repository issues page.</p>
+
+</body>
+</html>
