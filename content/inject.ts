@@ -51,7 +51,7 @@ async function runRewrite(
   return response.data as RewriteResponse;
 }
 
-// Floats as its own box above the composer via position: fixed, rather than
+// Floats as its own box beside the composer via position: fixed, rather than
 // being appended inline into the host page's icon row -- decouples us from
 // that row's cramped flex layout entirely.
 function createButton(adapter: SiteAdapter): HTMLButtonElement {
@@ -69,7 +69,7 @@ function createButton(adapter: SiteAdapter): HTMLButtonElement {
   return button;
 }
 
-function positionButtonAboveComposer(adapter: SiteAdapter, button: HTMLButtonElement) {
+function positionButtonBesideComposer(adapter: SiteAdapter, button: HTMLButtonElement) {
   const reference = adapter.getInputEl() ?? adapter.getButtonAnchor();
   if (!reference) return;
 
@@ -77,9 +77,17 @@ function positionButtonAboveComposer(adapter: SiteAdapter, button: HTMLButtonEle
   const referenceRect = reference.getBoundingClientRect();
   const buttonRect = button.getBoundingClientRect();
 
-  const top = Math.max(margin, referenceRect.top - buttonRect.height - margin);
-  const maxLeft = window.innerWidth - buttonRect.width - margin;
-  const left = Math.min(Math.max(margin, referenceRect.left), Math.max(margin, maxLeft));
+  const centeredTop = referenceRect.top + (referenceRect.height - buttonRect.height) / 2;
+  const maxTop = window.innerHeight - buttonRect.height - margin;
+  const top = Math.min(Math.max(margin, centeredTop), Math.max(margin, maxTop));
+
+  // Prefer floating just outside the composer's right edge; if there isn't
+  // room (narrow viewport), fall back to just outside its left edge instead
+  // of overlapping the box.
+  const fitsOnRight = referenceRect.right + margin + buttonRect.width <= window.innerWidth - margin;
+  const left = fitsOnRight
+    ? referenceRect.right + margin
+    : Math.max(margin, referenceRect.left - buttonRect.width - margin);
 
   button.style.top = `${top}px`;
   button.style.left = `${left}px`;
@@ -133,7 +141,15 @@ function injectButton(adapter: SiteAdapter) {
     button.addEventListener("click", () => handleEnhanceClick(adapter, button!));
     document.body.appendChild(button);
   }
-  positionButtonAboveComposer(adapter, button);
+
+  // Nothing to enhance in an empty composer -- stay out of the way until the
+  // user has actually drafted something. Hide before positioning, since a
+  // hidden button measures 0x0 and would be placed wrong on the way back.
+  const hasDraft = adapter.getText().length > 0;
+  button.style.display = hasDraft ? "inline-block" : "none";
+  if (!hasDraft) return;
+
+  positionButtonBesideComposer(adapter, button);
 }
 
 // If the adapter's selectors never find a composer within a few seconds --
@@ -154,6 +170,10 @@ function main() {
   // from scrolling inside the composer itself) and made the button visibly
   // drift instead of staying anchored in place.
   window.addEventListener("resize", () => injectButton(adapter));
+  // Typing into a <textarea> (chatgpt.com) changes .value without mutating the
+  // DOM, so the MutationObserver above never sees it -- listen for input
+  // events too, in capture phase so host handlers can't stop them first.
+  document.addEventListener("input", () => injectButton(adapter), true);
   injectButton(adapter);
 
   setTimeout(() => {
